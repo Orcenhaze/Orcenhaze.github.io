@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Row- and column-major, row and column vectors | Orcenhaze</title>
+<meta name="keywords" content="">
+<meta name="description" content="Jan. 2022">
+<meta name="author" content="">
+<link rel="canonical" href="https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36755f6c44b3bbb15938c43b1c40831badca7a5dbc6b4a3a947ca8ab5b21d388.css" integrity="sha256-NnVfbESzu7FZOMQ7HECDG63Kel28a0o6lHyoq1sh04g=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://orcenhaze.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://orcenhaze.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://orcenhaze.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://orcenhaze.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://orcenhaze.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Row- and column-major, row and column vectors" />
+<meta property="og:description" content="Jan. 2022" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/" /><meta property="article:section" content="blog" />
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Row- and column-major, row and column vectors"/>
+<meta name="twitter:description" content="Jan. 2022"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Blog",
+      "item": "https://orcenhaze.github.io/blog/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Row- and column-major, row and column vectors",
+      "item": "https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Row- and column-major, row and column vectors",
+  "name": "Row- and column-major, row and column vectors",
+  "description": "Jan. 2022",
+  "keywords": [
+    
+  ],
+  "articleBody": "Introduction When you’re making a game engine, you are constantly multiplying and constructing transformation matrices; chances are, you ran by the subject of row/column-major along the way and possibly got confused about some things. In this post, I’d like to make things clear and share with you what I learned when I had the same experience.\nBefore beginning, please note the following:\nA matrix A is defined as Matmxn where m=rows n=cols, and a(i, j) always refers to the element in the i-th row and j-th column. So in mathematics, whenever you see row/column indices, the first number should always be the row, and the second number is always the column.\nMultiplying two matrices is defined if and only if the number of columns in the first matrix is equal to the number of rows in the second matrix, i.e. the inner dimensions must match.\nIn mathematics, there’s no such thing as row/column-major. Row/column-major refers only to storage layout, which is specified by the programming language. What we do have, are row and column vectors.\nRow and column vectors If we have a Mat4x4 transform M and a Vec4 v, and we wanted to transform v by M; we multiply them in one of two ways:\nv is a row vector Mat1x4, and transforming v by M is written in the order vM. Doing Mv, i.e. Mat4x4*Mat1x4 is not allowed, because the inner dimensions don’t match.\nv is a column vector Mat4x1, and transforming v by M is written in the order Mv.\nTake the following two examples (in code form for alignment), where M here is a Mat2x2 and v is a Vec2:\nI) Mv: | x | | y | * | m11 m12 | | m11*x + m12*y | | m21 m22 | | m21*x + m22*y | II) vM: | m11 m12 | | m21 m22 | * | x y | | x*m11 + y*m21 x*m12 + y*m22 | The results are different and that is not surprising; matrix multiplication is not commutative. Getting the same result requires us to transpose both v and M, not just v (as the transpose of a column vector is a row vector and vice versa).\nSo, row and column vectors tell us the order of multiplication, and therefore, how we should construct our transform matrices. Having said that and to reiterate: if you use a column vector v and have constructed a transform matrix M, you would do Mv to apply the transform. If, for whatever reason, you decided to switch to row vectors, which means you have transposed v; you will no longer get the same output vector, unless you also transpose the transform matrix M. Only then would vM give the same result.\nRow- and column-major Almost everywhere except for early Computer Graphics, column vectors are used by default, i.e. multiplication order in most textbooks is Mv.\nFrom what I’ve read, this annoyed a lot of people and someone decided to fix the OpenGL spec and switch to column vectors instead of row vectors, to be consistent with most math and physics textbooks.\nHere is where the col/row-major comes in:\nfor clarity, I want to define a translation matrix T where the translation vector t in early Computer Graphics was placed in the last row, like so:\nT \"vM\": | 1 0 0 0 | | 0 1 0 0 | | 0 0 1 0 | | tx ty tz 1 | Now if we were to define this matrix in C/C++, we would need to consider something: given that computer memory addressing is 1-dimensional, does C/C++ store the entire 2D array contiguously in memory?\nIf yes, then the language has to decide which elements of that 2D array are going to be contiguous. If rows are contiguous, then it is row-major. If columns are contiguous; it is column-major.\nAs you may already know, C/C++ does store 2D arrays contiguously in memory, and it is row-major. So if you were to define the matrix T in C/C++; it would look like this in memory:\n|| 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1 || When they switched to column vectors, T had to change to this:\nT \"Mv\": | 1 0 0 tx | | 0 1 0 ty | | 0 0 1 yz | | 0 0 0 1 | If we change T in C/C++; it would now look like this in memory:\n|| 1, 0, 0, t.x, 0, 1, 0, t.y, 0, 0, 1, t.z, 0, 0, 0, 1 || They didn’t like that they weren’t compatible with the old memory layout, so their “fix” was to change from row-major to column-major. That means if we have a matrix B and make B[j][i] = T[i][j], the columns for B are now stored contiguously in memory. That way B has the old memory layout, only now using column vectors instead of row vectors.\nThe fact that a matrix is stored in column-major does NOT affect the rules of multiplication, but only how we retrieve some element in that matrix using some programming language.\nRemember in mathematics, if we see row/column indices, the first number is always referring to the row, and the second number is referring to the column. M[][] however, is programming language syntax, and whether the first number in that context represents row or column depends on whether M is row-major or column-major.\nTake as an example a Mat3x3 C, and a Vec3 v; we want to transform v by C. Let’s say we are using column vectors, so the multiplication order is Cv. The y-component for the resulting vector is computed mathematically as:\nc21x + c22y + c23*z\nWhen implementing this in code, only now do we care about row-major vs. column-major. Because for example, how do we retrieve c21 from memory?\n// If C is row-major. result.y = C[2][1]*v.x + C[2][2]*v.y + C[2][3]*v.z; // If C is column-major. result.y = C[1][2]*v.x + C[2][2]*v.y + C[3][2]*v.z; From what I understand, the OpenGL spec went against the mathematical notation for matrix indices, claiming that they use “column-major index notation”, i.e. a(i, j) in their notation is the element in i-th column and j-th row; when in reality, there is no such thing as “column-major” in math, it doesn’t care about storage order, and a(i, j) is always the element in i-th row and j-th column.\nFinal Remarks In your engine, you need to specify two things when it comes to matrices and matrix multiplication:\nrow vectors vs. column vectors (to decide order of multiplication). row-major vs. column-major (to decide how to store matrix in memory). I like using row-major with column vectors, to stay consistent with the common notation of C/C++ and math, but it is important to note that column-major can be a better choice when doing SIMD.\nWhen declaring your matrix structure, a trick you can do is name each element by its index explicitly, where the first number is always the row, as per the mathematical notation:\n// row-major. // Matmxn // a(i, j) = arr[i][j] = arr[i*m + j] struct Mat4x4 { float _11, _12, _13, _14; float _21, _22, _23, _24; float _31, _32, _33, _34; float _41, _42, _43, _44; }; // column-major. // Matmxn // a(i, j) = arr[j][i] = arr[i + n*j] struct Mat4x4 { float _11, _21, _31, _41; float _12, _22, _32, _42; float _13, _23, _33, _43; float _14, _24, _34, _44; }; And now in our matrix multiplication function, we use the variable names instead of indexing using M[][]:\nMat4x4 M; Vec4 v; // Mv+row-major. result.x = M._11*v.x + M._12*v.y + M._13*v.z + M._14*v.w; result.y = M._21*v.x + M._22*v.y + M._23*v.z + M._24*v.w; result.z = M._31*v.x + M._32*v.y + M._33*v.z + M._34*v.w; result.w = M._41*v.x + M._42*v.y + M._43*v.z + M._44*v.w; // Mv+column-major. result.x = M._11*v.x + M._12*v.y + M._13*v.z + M._14*v.w; result.y = M._21*v.x + M._22*v.y + M._23*v.z + M._24*v.w; result.z = M._31*v.x + M._32*v.y + M._33*v.z + M._34*v.w; result.w = M._41*v.x + M._42*v.y + M._43*v.z + M._44*v.w; // // // No difference! You also ideally want to use same multiplication order in both CPU and GPU. Nowadays, you can easily tell shader languages, such as GLSL and HLSL, what sort of matrices you want to use.\nReferences Fabian Giesen’s blog:\nRow major vs. column major, row vectors vs. column vectors\nRow-major vs. column-major and GL ES\nAustin Morlan’s blog:\nOpenGL matrices\n",
+  "wordCount" : "1413",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Orcenhaze",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://orcenhaze.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class=" dark" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://orcenhaze.github.io/" accesskey="h" title="Orcenhaze (Alt + H)">
+                <img src="https://orcenhaze.github.io/52_logo.jpg" alt="" aria-label="logo"
+                    height="40">Orcenhaze</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://orcenhaze.github.io/" title="Home">Home
+                </a>
+            </li>
+            <li>
+                <a href="https://orcenhaze.github.io/blog/" title="Blog">Blog
+                </a>
+            </li>
+            <li>
+                <a href="https://orcenhaze.github.io/projects/" title="Projects">Projects
+                </a>
+            </li>
+            <li>
+                <a href="https://orcenhaze.github.io/art/" title="Art">Art
+                </a>
+            </li>
+            <li>
+                <a href="https://orcenhaze.github.io/about/" title="About">About
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Row- and column-major, row and column vectors
+    </h1>
+    <div class="post-description">
+      Jan. 2022
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="introduction">Introduction</h2>
+<p>When you&rsquo;re making a game engine, you are constantly multiplying and constructing transformation matrices; chances are, you ran by
+the subject of row/column-major along the way and possibly got confused about some things. In this post, I&rsquo;d like to make things clear and share with you what I learned when I had the same experience.<br>
+Before beginning, please note the following:</p>
+<ul>
+<li>
+<p>A matrix <code>A</code> is defined as <code>Matmxn</code> where <code>m=rows n=cols</code>,
+and <code>a(i, j)</code> always refers to the element in the i-th row and j-th column.
+So in mathematics, whenever you see row/column indices, the first number should always be the row, and the second number is always the column.</p>
+</li>
+<li>
+<p>Multiplying two matrices is defined if and only if the number of columns in the first matrix is equal to the number of rows in the second matrix, i.e. the inner dimensions <strong>must</strong> match.</p>
+</li>
+<li>
+<p>In mathematics, there&rsquo;s no such thing as row/column-major. Row/column-major refers only to storage layout, which is specified by the programming language. What we do have, are row and column vectors.</p>
+</li>
+</ul>
+<h2 id="row-and-column-vectors">Row and column vectors</h2>
+<p>If we have a <code>Mat4x4</code> transform <code>M</code> and a <code>Vec4</code> <code>v</code>, and we wanted to transform
+<code>v</code> by <code>M</code>; we multiply them in one of two ways:</p>
+<ol>
+<li>
+<p><code>v</code> is a row vector <code>Mat1x4</code>, and transforming <code>v</code> by <code>M</code> is written in the order <code>vM</code>.
+Doing <code>Mv</code>, i.e. <code>Mat4x4*Mat1x4</code> is not allowed, because the inner dimensions don&rsquo;t match.</p>
+</li>
+<li>
+<p><code>v</code> is a column vector <code>Mat4x1</code>, and transforming <code>v</code> by <code>M</code> is written in the order <code>Mv</code>.</p>
+</li>
+</ol>
+<p>Take the following two examples (in code form for alignment), where <code>M</code> here is a <code>Mat2x2</code> and <code>v</code> is a <code>Vec2</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>I) Mv:      <span style="color:#f92672">|</span> x <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> y <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> m11 m12 <span style="color:#f92672">|</span> <span style="color:#f92672">|</span> m11<span style="color:#f92672">*</span>x <span style="color:#f92672">+</span> m12<span style="color:#f92672">*</span>y <span style="color:#f92672">|</span> 
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> m21 m22 <span style="color:#f92672">|</span> <span style="color:#f92672">|</span> m21<span style="color:#f92672">*</span>x <span style="color:#f92672">+</span> m22<span style="color:#f92672">*</span>y <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>II) vM:     <span style="color:#f92672">|</span> m11             m12 <span style="color:#f92672">|</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> m21             m22 <span style="color:#f92672">|</span> 
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> x y <span style="color:#f92672">|</span> <span style="color:#f92672">|</span> x<span style="color:#f92672">*</span>m11 <span style="color:#f92672">+</span> y<span style="color:#f92672">*</span>m21   x<span style="color:#f92672">*</span>m12 <span style="color:#f92672">+</span> y<span style="color:#f92672">*</span>m22 <span style="color:#f92672">|</span> 
+</span></span></code></pre></div><p>The results are different and that is not surprising; matrix multiplication is not
+commutative. Getting the same result requires us to transpose both <code>v</code> and <code>M</code>, not just <code>v</code>
+(as the transpose of a column vector is a row vector and vice versa).</p>
+<p>So, row and column vectors tell us the order of multiplication, and therefore, how we should construct our transform matrices.
+Having said that and to reiterate: if you use a column vector <code>v</code> and have constructed a transform matrix <code>M</code>, you would
+do <code>Mv</code> to apply the transform.
+If, for whatever reason, you decided to switch to row vectors, which means you have transposed <code>v</code>; you will no longer get
+the same output vector, <em>unless</em> you <em>also</em> transpose the transform matrix <code>M</code>. Only then would <code>vM</code>
+give the same result.</p>
+<h2 id="row--and-column-major">Row- and column-major</h2>
+<p>Almost everywhere except for early Computer Graphics, column vectors are used by
+default, i.e. multiplication order in most textbooks is <code>Mv</code>.</p>
+<p>From what I&rsquo;ve read, this annoyed a lot of people and someone decided to fix the OpenGL
+spec and switch to column vectors instead of row vectors, to be consistent with most math and physics textbooks.</p>
+<p>Here is where the col/row-major comes in:<br>
+for clarity, I want to define a translation matrix <code>T</code> where the translation vector <code>t</code> in early Computer Graphics
+was placed in the last row, like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>T <span style="color:#e6db74">&#34;vM&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> tx ty tz  <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span>
+</span></span></code></pre></div><p>Now if we were to define this matrix in C/C++, we would need to consider something: given that computer memory addressing is 1-dimensional, does C/C++ store the entire 2D array contiguously in memory?<br>
+If yes, then the language has to decide which elements of that 2D array are going to be contiguous. If rows are contiguous, then it is row-major. If columns are contiguous; it is column-major.<br>
+As you may already know, C/C++ does store 2D arrays contiguously in memory, and it is row-major. So if you were to define the matrix <code>T</code> in C/C++; it would look like this in memory:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#f92672">||</span> <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,   <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,   <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>,   tx, ty, tz, <span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span>
+</span></span></code></pre></div><hr>
+<p>When they switched to column vectors, <code>T</code> had to change to this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>T <span style="color:#e6db74">&#34;Mv&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>  tx <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>  ty <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  yz <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span>
+</span></span></code></pre></div><p>If we change <code>T</code> in C/C++; it would now look like this in memory:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#f92672">||</span> <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, t.x,   <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, t.y,   <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, t.z,   <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span>
+</span></span></code></pre></div><p>They didn&rsquo;t like that they weren&rsquo;t compatible with the old memory layout, so their &ldquo;fix&rdquo; was to change from row-major to column-major.
+That means if we have a matrix <code>B</code> and make <code>B[j][i] = T[i][j]</code>, the columns for <code>B</code> are now stored contiguously in memory.
+That way <code>B</code> has the old memory layout, only now using column vectors instead of row vectors.</p>
+<p>The fact that a matrix is stored in column-major does <strong>NOT</strong> affect the rules of multiplication, but only how we retrieve some element in that matrix using some programming language.<br>
+Remember in mathematics, if we see row/column indices, the first number is always referring to the row, and the second number is referring to the column. <code>M[][]</code> however, is programming language syntax, and whether the first number in that context represents row or column depends on whether <code>M</code> is row-major or column-major.<br>
+Take as an example a <code>Mat3x3</code> <code>C</code>, and a <code>Vec3</code> <code>v</code>; we want to transform <code>v</code> by <code>C</code>. Let&rsquo;s say we are using column vectors, so the multiplication order is <code>Cv</code>. The y-component for the resulting vector is computed <strong>mathematically</strong> as:</p>
+<blockquote>
+<p>c21<em>x + c22</em>y + c23*z</p>
+</blockquote>
+<p>When implementing this in code, only <em>now</em> do we care about row-major vs. column-major. Because for example, how do we retrieve <code>c21</code> from memory?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// If C is row-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>result.y <span style="color:#f92672">=</span> C[<span style="color:#ae81ff">2</span>][<span style="color:#ae81ff">1</span>]<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> C[<span style="color:#ae81ff">2</span>][<span style="color:#ae81ff">2</span>]<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> C[<span style="color:#ae81ff">2</span>][<span style="color:#ae81ff">3</span>]<span style="color:#f92672">*</span>v.z;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// If C is column-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>result.y <span style="color:#f92672">=</span> C[<span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>]<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> C[<span style="color:#ae81ff">2</span>][<span style="color:#ae81ff">2</span>]<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> C[<span style="color:#ae81ff">3</span>][<span style="color:#ae81ff">2</span>]<span style="color:#f92672">*</span>v.z;
+</span></span></code></pre></div><hr>
+<p>From what I understand, the OpenGL spec went against the mathematical notation for matrix indices, claiming that they use &ldquo;column-major index notation&rdquo;, i.e. <code>a(i, j)</code> in their notation is the element in <del>i-th column and j-th row</del>; when in reality, there is no such thing as &ldquo;column-major&rdquo; in math, it doesn&rsquo;t care about storage order, and <code>a(i, j)</code> is always the element in i-th row and j-th column.</p>
+<h2 id="final-remarks">Final Remarks</h2>
+<p>In your engine, you need to specify two things when it comes to matrices and matrix multiplication:</p>
+<ul>
+<li>row vectors vs. column vectors (to decide order of multiplication).</li>
+<li>row-major vs. column-major (to decide how to store matrix in memory).</li>
+</ul>
+<p>I like using row-major with column vectors, to stay consistent with the common notation of C/C++ and math,
+but it is important to note that column-major can be a better choice when doing SIMD.</p>
+<p>When declaring your matrix structure, a trick you can do is name each element by its index explicitly, where the first number is always the row, as per the mathematical notation:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// row-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Matmxn
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// a(i, j) = arr[i][j] = arr[i*m + j]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> Mat4x4
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _11, _12, _13, _14;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _21, _22, _23, _24;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _31, _32, _33, _34;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _41, _42, _43, _44;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// column-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Matmxn
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// a(i, j) = arr[j][i] = arr[i + n*j]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> Mat4x4
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _11, _21, _31, _41;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _12, _22, _32, _42;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _13, _23, _33, _43;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> _14, _24, _34, _44;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>And now in our matrix multiplication function, we use the variable names instead of indexing using <code>M[][]</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>Mat4x4 M;
+</span></span><span style="display:flex;"><span>Vec4   v;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Mv+row-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>result.x <span style="color:#f92672">=</span> M._11<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._12<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._13<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._14<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.y <span style="color:#f92672">=</span> M._21<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._22<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._23<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._24<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.z <span style="color:#f92672">=</span> M._31<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._32<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._33<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._34<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.w <span style="color:#f92672">=</span> M._41<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._42<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._43<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._44<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Mv+column-major.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>result.x <span style="color:#f92672">=</span> M._11<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._12<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._13<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._14<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.y <span style="color:#f92672">=</span> M._21<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._22<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._23<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._24<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.z <span style="color:#f92672">=</span> M._31<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._32<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._33<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._34<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>result.w <span style="color:#f92672">=</span> M._41<span style="color:#f92672">*</span>v.x <span style="color:#f92672">+</span> M._42<span style="color:#f92672">*</span>v.y <span style="color:#f92672">+</span> M._43<span style="color:#f92672">*</span>v.z <span style="color:#f92672">+</span> M._44<span style="color:#f92672">*</span>v.w;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// No difference!
+</span></span></span></code></pre></div><hr>
+<p>You also ideally want to use same multiplication order in both CPU and GPU. Nowadays, you can easily tell shader languages, such as <a href="https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Matrix_storage_order">GLSL</a> and <a href="https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/d3dcompile-constants#:~:text=D3DCOMPILE_PACK_MATRIX_ROW_MAJOR">HLSL</a>, what sort of matrices you want to use.</p>
+<h2 id="references">References</h2>
+<p>Fabian Giesen&rsquo;s blog:<br>
+<a href="https:fgiesen.wordpress.com/2012/02/12/row-major-vs-column-major-row-vectors-vs-column-vectors/">Row major vs. column major, row vectors vs. column vectors</a><br>
+<a href="https:fgiesen.wordpress.com/2011/05/04/row-major-vs-column-major-and-gl-es/">Row-major vs. column-major and GL ES</a></p>
+<p>Austin Morlan&rsquo;s blog:<br>
+<a href="https:austinmorlan.com/posts/opengl_matrices/#what-to-do">OpenGL matrices</a></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://orcenhaze.github.io/art/music/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Music</span>
+  </a>
+  <a class="next" href="https://orcenhaze.github.io/art/3d/">
+    <span class="title">Next »</span>
+    <br>
+    <span>3D</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Row- and column-major, row and column vectors on twitter"
+        href="https://twitter.com/intent/tweet/?text=Row-%20and%20column-major%2c%20row%20and%20column%20vectors&amp;url=https%3a%2f%2forcenhaze.github.io%2fblog%2frow_and_column_major_row_and_column_vectors%2f&amp;hashtags=">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Row- and column-major, row and column vectors on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2forcenhaze.github.io%2fblog%2frow_and_column_major_row_and_column_vectors%2f&amp;title=Row-%20and%20column-major%2c%20row%20and%20column%20vectors&amp;summary=Row-%20and%20column-major%2c%20row%20and%20column%20vectors&amp;source=https%3a%2f%2forcenhaze.github.io%2fblog%2frow_and_column_major_row_and_column_vectors%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Row- and column-major, row and column vectors on whatsapp"
+        href="https://api.whatsapp.com/send?text=Row-%20and%20column-major%2c%20row%20and%20column%20vectors%20-%20https%3a%2f%2forcenhaze.github.io%2fblog%2frow_and_column_major_row_and_column_vectors%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    <div class="contact">
+    Contact:
+    <a href="mailto: orcenhaze@gmail.com">orcenhaze@gmail.com</a>
+</div>
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://orcenhaze.github.io/">Orcenhaze</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
