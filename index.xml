@@ -7,6 +7,42 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://orcenhaze.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Currently working on</title>
+      <link>https://orcenhaze.github.io/blog/currently_working_on/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/blog/currently_working_on/</guid>
+      <description>Jun. 2022</description>
+    </item>
+    
+    <item>
+      <title>Currently working on</title>
+      <link>https://orcenhaze.github.io/projects/currently_working_on/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/currently_working_on/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Drawings</title>
+      <link>https://orcenhaze.github.io/art/drawings/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/art/drawings/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>3D</title>
+      <link>https://orcenhaze.github.io/art/3d/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/art/3d/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>3D demo game</title>
       <link>https://orcenhaze.github.io/blog/3d_demo_game/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -25,21 +61,12 @@
     </item>
     
     <item>
-      <title>Drawings</title>
-      <link>https://orcenhaze.github.io/art/drawings/</link>
+      <title>Emprac</title>
+      <link>https://orcenhaze.github.io/projects/emprac/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://orcenhaze.github.io/art/drawings/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Music</title>
-      <link>https://orcenhaze.github.io/art/music/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/art/music/</guid>
-      <description>My First Song! </description>
+      <guid>https://orcenhaze.github.io/projects/emprac/</guid>
+      <description>Aim practice tool</description>
     </item>
     
     <item>
@@ -49,24 +76,6 @@
       
       <guid>https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/</guid>
       <description>Jan. 2022</description>
-    </item>
-    
-    <item>
-      <title>3D</title>
-      <link>https://orcenhaze.github.io/art/3d/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/art/3d/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Emprac</title>
-      <link>https://orcenhaze.github.io/projects/emprac/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/projects/emprac/</guid>
-      <description>Aim practice tool</description>
     </item>
     
     <item>
