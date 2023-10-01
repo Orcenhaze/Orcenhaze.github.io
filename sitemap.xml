@@ -2,11 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://orcenhaze.github.io/blog/currently_working_on/</loc>
-  </url><url>
-    <loc>https://orcenhaze.github.io/projects/currently_working_on/</loc>
-  </url><url>
     <loc>https://orcenhaze.github.io/art/drawings/</loc>
+  </url><url>
+    <loc>https://orcenhaze.github.io/projects/minura/</loc>
   </url><url>
     <loc>https://orcenhaze.github.io/art/3d/</loc>
   </url><url>
@@ -25,8 +23,6 @@
     <loc>https://orcenhaze.github.io/art/writing/thither/</loc>
   </url><url>
     <loc>https://orcenhaze.github.io/art/writing/floating/</loc>
-  </url><url>
-    <loc>https://orcenhaze.github.io/about/</loc>
   </url><url>
     <loc>https://orcenhaze.github.io/art/</loc>
   </url><url>
