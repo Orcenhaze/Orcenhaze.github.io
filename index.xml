@@ -7,12 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://orcenhaze.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Skeletal Animation From Scratch</title>
+      <link>https://orcenhaze.github.io/projects/skeletal_animation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/skeletal_animation/</guid>
+      <description>C/C&#43;&#43; project - custom engine</description>
+    </item>
+    
+    <item>
       <title>Drawings</title>
       <link>https://orcenhaze.github.io/art/drawings/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://orcenhaze.github.io/art/drawings/</guid>
-      <description> </description>
+      <description></description>
     </item>
     
     <item>
@@ -21,43 +30,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://orcenhaze.github.io/projects/minura/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>3D</title>
-      <link>https://orcenhaze.github.io/art/3d/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/art/3d/</guid>
-      <description> </description>
-    </item>
-    
-    <item>
-      <title>3D demo game</title>
-      <link>https://orcenhaze.github.io/blog/3d_demo_game/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/blog/3d_demo_game/</guid>
-      <description>Sep. 2022</description>
-    </item>
-    
-    <item>
-      <title>3D demo game</title>
-      <link>https://orcenhaze.github.io/projects/3d_demo_game/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/projects/3d_demo_game/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Emprac</title>
-      <link>https://orcenhaze.github.io/projects/emprac/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://orcenhaze.github.io/projects/emprac/</guid>
-      <description>Aim practice tool</description>
+      <description>Puzzle game - C/C&#43;&#43; - custom engine</description>
     </item>
     
     <item>
@@ -66,7 +39,34 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://orcenhaze.github.io/blog/row_and_column_major_row_and_column_vectors/</guid>
-      <description>Jan. 2022</description>
+      <description>Blog - Jan. 2022</description>
+    </item>
+    
+    <item>
+      <title>3D</title>
+      <link>https://orcenhaze.github.io/art/3d/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/art/3d/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>3D Demo Game</title>
+      <link>https://orcenhaze.github.io/projects/3d_demo_game/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/3d_demo_game/</guid>
+      <description>C/C&#43;&#43; project - custom engine</description>
+    </item>
+    
+    <item>
+      <title>Emprac</title>
+      <link>https://orcenhaze.github.io/projects/emprac/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/emprac/</guid>
+      <description>Aim practice tool - Typescript/Angular</description>
     </item>
     
     <item>
