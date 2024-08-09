@@ -7,6 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://orcenhaze.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Hard Lock Target</title>
+      <link>https://orcenhaze.github.io/projects/hard_lock_target/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/hard_lock_target/</guid>
+      <description>Unreal Engine C&#43;&#43; Code Plugin</description>
+    </item>
+    
+    <item>
       <title>Skeletal Animation From Scratch</title>
       <link>https://orcenhaze.github.io/projects/skeletal_animation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
