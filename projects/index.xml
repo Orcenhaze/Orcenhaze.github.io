@@ -7,6 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://orcenhaze.github.io/projects/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Sum of Sines</title>
+      <link>https://orcenhaze.github.io/projects/sum_of_sines/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://orcenhaze.github.io/projects/sum_of_sines/</guid>
+      <description>C/C&#43;&#43; - custom engine</description>
+    </item>
+    
+    <item>
       <title>Hard Lock Target</title>
       <link>https://orcenhaze.github.io/projects/hard_lock_target/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
